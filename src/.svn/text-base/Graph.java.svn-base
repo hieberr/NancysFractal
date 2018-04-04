@@ -1,0 +1,170 @@
+import processing.core.*;
+
+
+/**
+ * @author floatingpoint
+ * Provides a 2 dimensional graph
+ */
+public class Graph extends DisplayableObject {
+  public PImage pixels;
+  //public int width;  //the 
+  //public int height;
+  
+  protected float xMin = -1, xMax = 1;  //the minimum and maximum domain values.
+  protected float yMin = -1, yMax = 1;  //the minimum and maximum range values.
+  protected boolean showAxes = false;  //do we draw the x and y axes.
+  
+  Graph(PApplet processingContext){
+    super(processingContext);
+    pixels = processingContext.createImage(processingContext.width, processingContext.height, processingContext.RGB);
+  }
+  
+  protected void draw(){
+    if(showAxes){
+      this.processingContext.stroke(255);
+      //this.processingContext.strokeWeight(.01f);
+
+      //draw the y axis.
+      processingContext.line(getScreenCoordinateX(0), -1, getScreenCoordinateX(0), 1);
+      //processingContext.text("origin",0,0);
+      //draw the x axis.
+
+      processingContext.line(-1, getScreenCoordinateY(0), 1, getScreenCoordinateY(0));
+      
+
+    }
+    processingContext.image(pixels, -1, -1,2,2);
+  }
+  
+  public void plotPt(float xCoordinate, float yCoordinate, int R, int G, int B){
+    //convert the point to a pixel value
+    
+    //convert x
+    float ratio = (xCoordinate - xMin) / (xMax - xMin);//xCoordinate/(xMax - xMin);
+    int x = (int)(pixels.width * ratio);
+    if(x >= pixels.width-1){
+      x = pixels.width-1;
+    }   
+    
+    //convert y
+    ratio = (yCoordinate - yMin) / (yMax - yMin);
+    int y = (int)(pixels.height * ratio);   
+    if(y >= pixels.height-1){
+      y = pixels.height-1;
+    }
+    //x = pixels.width;
+    //y = processingContext.max(y, pixels.width);  
+    //pixels.loadPixels();
+    pixels.pixels[(int)((y*pixels.width)+x)] = processingContext.color(R, G, B);
+    pixels.updatePixels();
+    
+  }
+  
+  public float getxMin() {
+    return xMin;
+  }
+
+  public void setxMin(float xMin) {
+    this.xMin = xMin;
+  }
+
+  public float getxMax() {
+    return xMax;
+  }
+
+  public void setxMax(float xMax) {
+    this.xMax = xMax;
+  }
+
+  public float getyMin() {
+    return yMin;
+  }
+
+  public void setyMin(float yMin) {
+    this.yMin = yMin;
+  }
+
+  public float getyMax() {
+    return yMax;
+  }
+
+  public void setyMax(float yMax) {
+    this.yMax = yMax;
+  }
+
+  public boolean isShowAxes() {
+    return showAxes;
+  }
+
+  public void setShowAxes(boolean showAxes) {
+    this.showAxes = showAxes;
+  }
+  
+  //void panUpDownByRelativeAmount(float amount) pans up and down 
+  //on the graph by an amount relative to the current view.
+  //an amount value of 0 will not change the graph at all.
+  //an amount of 1 will pan the graph up by one full graph height.
+  //an amount of -1 will pan the graph down by one full graph height.
+  public void panUpDownByRelativeAmount(float amount){
+    float shiftAmt;
+    shiftAmt = amount * (yMax - yMin);
+    yMin += shiftAmt;
+    yMax += shiftAmt;
+  }
+  
+  //void panLeftRightByRelativeAmount(float amount) pans up and down 
+  //on the graph by an amount relative to the current view.
+  //an amount value of 0 will not change the graph at all.
+  //an amount of 1 will pan the graph up by one full graph height.
+  //an amount of -1 will pan the graph down by one full graph height.
+  public void panLeftRightByRelativeAmount(float amount){
+    float shiftAmt;
+    shiftAmt = amount * (xMax - xMin);
+    xMin += shiftAmt;
+    xMax += shiftAmt;
+  }  
+  
+  public void zoomOnPointByRelativeAmount(float pointX, float pointY, float amount){
+    xMax = (1/amount * (xMax - pointX)) + pointX;
+    xMin = (1/amount * (xMin - pointX)) + pointX;
+    yMax = (1/amount * (yMax - pointY)) + pointY;
+    yMin = (1/amount * (yMin - pointY)) + pointY;
+    
+  }
+  public void zoomByRelativeAmount(float amount){
+    zoomOnPointByRelativeAmount( (xMax-xMin)/2 + xMin , (yMax-yMin)/2 + yMin, amount);
+  }
+  
+  //returns the screen coordinates for a point on the graph that the
+  //processing draw functions need.
+  public PVector getScreenCoordinatesFromPoint(float x, float y){
+    return new PVector((x / (xMax - xMin)) - xMin, (y / (yMax - yMin)) - yMin);
+  }
+  public PVector getScreenCoordinatesFromPoint(PVector point){
+    return new PVector((point.x / (xMax - xMin)) - xMin, (point.y / (yMax - yMin)) - yMin);
+    
+  }
+  public float getScreenCoordinateX(float x){
+    return ((x-xMin) / (xMax - xMin)) * 2 - 1;
+  
+  }
+  public float getScreenCoordinateY(float y){
+    return ((y-yMin) / (yMax - yMin)) * 2 - 1;
+  
+  } 
+  
+  public float getPixelWidth(){
+    return (xMax - xMin)/this.processingContext.width;
+  
+  }
+  public float getPixelHeight(){
+    return (yMax - yMin)/this.processingContext.height;
+  
+  }  
+
+
+  public void saveFrame(String fileName){
+    
+    pixels.save(fileName);
+  }
+}

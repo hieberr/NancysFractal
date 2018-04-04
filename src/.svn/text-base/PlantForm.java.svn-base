@@ -1,0 +1,139 @@
+
+import processing.core.*;
+import floatingpoint.toolkit.*;
+public class PlantForm extends PApplet{
+  private ViewPort viewPort;
+  private SpiralPlantForm spiralPlantForm;
+  private Graph graph;
+  int frameNumber = 0;
+  boolean isSavingFrames = false;
+  /**
+   * @param args
+   */
+  
+  ParameterManager parameterManager;
+  
+  public void setup () {
+    size (1024, 768);
+    this.noStroke();
+    viewPort = new ViewPort(0,0,width,height,this);
+    
+    graph = new Graph(this);
+    viewPort.addChild(graph);
+    
+    spiralPlantForm = new SpiralPlantForm(this, graph);
+    graph.addChild(spiralPlantForm);
+    //graph.addChild(spiralPlantForm);
+    //plant = new Plant(this);
+    //plant.setRotate(PI);
+  }
+  
+  public void draw () {
+    background (50);
+    //viewPort.increment();
+    viewPort.display();
+    if(isSavingFrames){
+      saveImage();
+    }
+    
+  }
+  
+  public void mouseClicked() {
+
+  }
+
+
+  public void keyPressed() {
+
+   //the arrow keys
+   if (key == CODED){
+     if(keyCode == UP){
+       graph.panUpDownByRelativeAmount(.05f);
+     } else if(keyCode == DOWN){
+       graph.panUpDownByRelativeAmount(-.05f);      
+     } else if(keyCode == LEFT){
+       graph.panLeftRightByRelativeAmount(-.05f);
+     } else if(keyCode == RIGHT){
+       graph.panLeftRightByRelativeAmount(.05f);
+     } 
+     
+     
+   }
+    
+   if (key == ' '){
+     graph.setShowAxes(true);
+   } else if (key == '='){
+     graph.zoomByRelativeAmount(1.02f);
+   } else if (key == '-'){
+     graph.zoomByRelativeAmount(1/1.02f);
+   } else if(key == '0'){
+      isSavingFrames = !isSavingFrames;
+   } else if (key == 'a') {
+      spiralPlantForm.decrementTheta();
+   } else if(key == 'q'){
+     spiralPlantForm.incrementTheta();
+   } else if(key == 'w'){
+     spiralPlantForm.incrementParam2();
+   } else if(key == 's'){
+     spiralPlantForm.decrementParam2();
+   }
+ 
+    
+  }
+  
+  void saveImage(){
+    String fileName = "frames3/foo";
+    if(frameNumber < 10){
+      fileName+="0000";
+    } else if(frameNumber<100){
+      fileName+="000";
+    } else if(frameNumber<1000){
+      fileName+="00";
+    } else if(frameNumber<10000){
+      fileName+="0";
+    } else if(frameNumber<10000){
+      fileName+="";
+    }
+    
+    fileName += frameNumber+".bmp";
+    
+    graph.saveFrame(fileName);
+    frameNumber++;
+  }
+}
+/*
+
+public class SoundPlant extends PApplet{
+  private ViewPort viewPort;
+  Plant plant;
+  public void setup () {
+    size (800, 600);
+
+    smooth();
+    
+    viewPort = new ViewPort(0,0,width,height,this);
+    plant = new Plant(this);
+    plant.setRotate(PI);
+    viewPort.addChild(plant);
+    viewPort.addChild(new Plant(this));
+
+    //midiSettings = new MidiSettings(this);
+    //midiSettingsGUI = new MidiSettingsGUI(this,midiSettings);
+
+  }
+ 
+  public void draw () {
+    background (0);
+    stroke(255);
+    //viewPort.increment();
+    viewPort.display();
+  }
+  
+  public void mouseClicked() {
+    //create the settings GUI
+    //SettingsGUI settings = new SettingsGUI(midiSettings);
+    //execShellCommand("/scripts/LiveA");
+  }
+}
+
+*/
