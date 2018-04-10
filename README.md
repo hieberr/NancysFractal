@@ -3,6 +3,11 @@
  
  The features change dramatically through several stages as you zoom in and zoom out. When you zoom all the way in there is interesting banding / aliasing as you hit the limit of floating point number precision.
  
+ Video compression can't really handle the (really cool) detailed noise that these fractals create but here's a look:
+ 
+ [Flythrough Video](https://www.youtube.com/watch?v=UuLbXqJznlg&feature=youtu.be)
+ 
+ 
  #### Processing note
  This example uses an older version of the processing.org library (2.x) and has not been updated for the newer versions. The older library is included in the /lib folder.  It should be simple to update I just haven't done it. The primary problem is that PApplet can no longer be added to Swing Components which is how this application embeds the Processing context in the main JFrame. 
 
